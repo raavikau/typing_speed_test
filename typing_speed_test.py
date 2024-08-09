@@ -6,7 +6,8 @@ word_list = ['Difficult', 'Trouble', 'Worthy', 'Gold', 'Six', 'radio', 'Will you
 background = 'gold2'
 foreground = 'red'
 sliderwords = ''
-count = wpm_count = 0
+timeleft = 60
+count = wpm_count = correct = wrong = 0
 def slider():
     global sliderwords, count
     text = 'Welcome to Typing Speed Game'
@@ -19,12 +20,28 @@ def slider():
     movingLabel.after(200, slider)
 
 def play_game(event):
-    global wpm_count
+    global wpm_count, correct, wrong
     wpm_count += 1
     wordCount.config(text=wpm_count)
+    if timeleft == 60:
+        timer()
+    if wordEntry.get() == wordList['text']:
+        correct += 1
+    else:
+        wrong += 1
     random.shuffle(word_list)
     wordList.config(text=word_list[0])
     wordEntry.delete(0, END)
+
+def timer():
+    global timeleft
+    if timeleft > 0:
+        timeleft -= 1
+        timeCounter.config(text=timeleft)
+        timeCounter.after(1000, timer)
+    else:
+        wordEntry.config(state=DISABLED)
+        instructionLabel.config(text=f"Correct Words {correct}\nWrong Words{wrong}")
 window = Tk()
 window.title('Speed Typing Test')
 window.geometry('700x500')
@@ -38,7 +55,7 @@ wordCount.config(padx=10, pady=10)
 wordCount.place(x=200, y=100)
 wordLabel = Label(text='word', bg=background, font=('ariel', 23, 'bold'))
 wordLabel.place(x=190, y=150)
-timeCounter = Label(text='0', font=('ariel', 20, 'normal'))
+timeCounter = Label(text=timeleft, font=('ariel', 20, 'normal'))
 timeCounter.config(padx=10, pady=10)
 timeCounter.place(x=450, y=100)
 timeLabel = Label(text='timer', bg=background, font=('ariel', 23, 'bold'))
