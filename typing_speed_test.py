@@ -1,13 +1,21 @@
-from tkinter import *
+import csv
 import random
-word_list = ['Difficult', 'Trouble', 'Worthy', 'Gold', 'Six', 'radio', 'Will you', 'Second', 'Future', 'Burn', 'General', 'Empty', 'Decision']
+from tkinter import *
 
 background = 'gold2'
 foreground = 'red'
 sliderwords = ''
 timeleft = 60
-completed_word = []
+completed_word = set()
 count = wpm_count = correct = wrong = 0
+word_list = []
+
+def load_word_list():
+    with open('words.csv') as word_data:
+        data = csv.reader(word_data)
+        for row in data:
+            word_list.append(''.join(row))
+
 def slider():
     global sliderwords, count
     text = 'Welcome to Typing Speed Game'
@@ -29,9 +37,16 @@ def play_game(event):  # Trigger when press Enter
         correct += 1
     else:
         wrong += 1
+    completed_word.add(wordList['text'])
     random.shuffle(word_list)
+    while word_list[0] in completed_word:
+        random.shuffle(word_list)
+    completed_word.add(word_list[0])
     wordList.config(text=word_list[0])
     wordEntry.delete(0, END)
+    if len(completed_word) >= len(word_list):  # if all words used from file
+        wordList.config(text="All words used!")
+        wordEntry.config(state=DISABLED)
 
 def timer():
     global timeleft
@@ -41,7 +56,8 @@ def timer():
         timeCounter.after(1000, timer)
     else:
         wordEntry.config(state=DISABLED)  # to disable entry field when times up
-        instructionLabel.config(text=f"Correct Words {correct} WPM\nWrong Words{wrong}")
+        instructionLabel.config(text=f"Correct Words {correct} WPM\nWrong Words {wrong}")
+
 window = Tk()
 window.title('Speed Typing Test')
 window.geometry('700x500')
@@ -60,7 +76,9 @@ timeCounter.config(padx=10, pady=10)
 timeCounter.place(x=450, y=100)
 timeLabel = Label(text='timer', bg=background, font=('ariel', 23, 'bold'))
 timeLabel.place(x=440, y=150)
-random.choice(word_list)
+
+load_word_list()
+random.shuffle(word_list)
 wordList = Label(text=word_list[0], bg=background, font=('ariel', 23))
 wordList.place(x=300, y=220)
 wordEntry = Entry(font=('ariel', 20), justify=CENTER)
