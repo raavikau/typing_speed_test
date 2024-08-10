@@ -1,25 +1,25 @@
 from tkinter import *
 import random
-word_list = ['Difficult', 'Trouble', 'Worthy', 'Gold', 'Six', 'radio', 'Will you', 'Second', 'Future', 'Burn', 'General', 'Empty', 'Decision',
-             'Others', 'motion', 'Control', 'Serious', 'eyes', 'move', 'Atom', 'rights', 'Missing', 'Clothes', 'Target', 'Quick', 'during']
+word_list = ['Difficult', 'Trouble', 'Worthy', 'Gold', 'Six', 'radio', 'Will you', 'Second', 'Future', 'Burn', 'General', 'Empty', 'Decision']
 
 background = 'gold2'
 foreground = 'red'
 sliderwords = ''
 timeleft = 60
+completed_word = []
 count = wpm_count = correct = wrong = 0
 def slider():
     global sliderwords, count
     text = 'Welcome to Typing Speed Game'
-    if count >= len(text):
+    if count >= len(text):  # start the slider from zero after once complete
         count = 0
         sliderwords = ''
-    sliderwords = sliderwords + text[count]
+    sliderwords = sliderwords + text[count]  # text moves by adding one character
     movingLabel.config(text=sliderwords)
     count += 1
-    movingLabel.after(200, slider)
+    movingLabel.after(200, slider)  # calls itself every 200 milli sec
 
-def play_game(event):
+def play_game(event):  # Trigger when press Enter
     global wpm_count, correct, wrong
     wpm_count += 1
     wordCount.config(text=wpm_count)
@@ -36,12 +36,12 @@ def play_game(event):
 def timer():
     global timeleft
     if timeleft > 0:
-        timeleft -= 1
+        timeleft -= 1  # decrease time counter
         timeCounter.config(text=timeleft)
         timeCounter.after(1000, timer)
     else:
-        wordEntry.config(state=DISABLED)
-        instructionLabel.config(text=f"Correct Words {correct}\nWrong Words{wrong}")
+        wordEntry.config(state=DISABLED)  # to disable entry field when times up
+        instructionLabel.config(text=f"Correct Words {correct} WPM\nWrong Words{wrong}")
 window = Tk()
 window.title('Speed Typing Test')
 window.geometry('700x500')
@@ -60,14 +60,14 @@ timeCounter.config(padx=10, pady=10)
 timeCounter.place(x=450, y=100)
 timeLabel = Label(text='timer', bg=background, font=('ariel', 23, 'bold'))
 timeLabel.place(x=440, y=150)
-random.shuffle(word_list)
+random.choice(word_list)
 wordList = Label(text=word_list[0], bg=background, font=('ariel', 23))
 wordList.place(x=300, y=220)
 wordEntry = Entry(font=('ariel', 20), justify=CENTER)
-wordEntry.focus_set()
+wordEntry.focus_set()  # set the cursor
 wordEntry.place(x=200, y=260)
 instructionLabel = Label(text='Type word and Hit Enter', fg=foreground, bg=background, font=('ariel', 22))
 instructionLabel.place(x=220, y=310)
-window.bind('<Return>', play_game)
+window.bind('<Return>', play_game)  # binds the Enter key to play_game func
 
 window.mainloop()
